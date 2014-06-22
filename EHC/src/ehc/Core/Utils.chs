@@ -230,12 +230,12 @@ emptyPullState = PullState Seq.empty Set.empty []
 
 -- | merge by pulling in that which is required only
 cModMergeByPullingIn
-  ::                                -- ^ function giving bindings for name
-     (HsName                        -- ^ name
+  ::                                --- ^ function giving bindings for name
+     (HsName                        --- ^ name
       -> Maybe
-           ( cat                    -- ^ category
-           , [bind]                 -- ^ and bindings
-           , HsNameS                -- ^ pulled in names (might be > 1 for mutual recursiveness)
+           ( cat                    --- ^ category
+           , [bind]                 --- ^ and bindings
+           , HsNameS                --- ^ pulled in names (might be > 1 for mutual recursiveness)
      )     )
      -> (expr -> HsNameS)           -- ^ extract free vars
      -> (bind -> [expr])            -- ^ extract relevant exprs for binding
@@ -243,8 +243,8 @@ cModMergeByPullingIn
                                     -- ^ update module with pulled bindings
      -> expr                        -- ^ start of pulling in, usually top level name "main"
      -> (cat,[(bind,HsNameS)])		-- ^ exports, providing additional pull starting points
-     -> ( (mod -> mod)              -- ^ conversion of resulting module
-        , HsNameS                   -- ^ modules from which something was taken
+     -> ( (mod -> mod)              --- ^ conversion of resulting module
+        , HsNameS                   --- ^ modules from which something was taken
         )
 cModMergeByPullingIn
      pullIn getExprFvS getBindExprs updMod
