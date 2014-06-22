@@ -471,26 +471,31 @@ EHC_SHUFFLE_ORDER	:= 1 < 2 < 3 < 4 < 4_99 < 5 < 6 < 7 < 8 < 9 < 10 < 11 < 12 < 1
 # $7: extra C sources
 # $8: build type
 # $9: license
-FUN_GEN_CABAL		= \
+# $10: library/executable section header
+FUN_GEN_CABAL_HEAD	= \
 					( \
-					echo   "Name:				$(strip $(1))" ; \
-					echo   "Version:			$(strip $(2))" ; \
-					echo   "License:			BSD3" ; \
-					echo   "Copyright:			Utrecht University, Department of Information and Computing Sciences, Software Technology group" ; \
-					echo   "Build-Type:			$(8)" ; \
+					echo   "name:				$(strip $(1))" ; \
+					echo   "synopsis:			$(strip $(5))" ; \
+					echo   "version:			$(strip $(2))" ; \
+					echo   "license:			BSD3" ; \
+					echo   "copyright:			Utrecht University, Department of Information and Computing Sciences, Software Technology group" ; \
+					echo   "build-type:			$(8)" ; \
 					echo   "license-file:		$(9)" ; \
-					echo   "Author:				UHC Team" ; \
-					echo   "Homepage:			http://www.cs.uu.nl/wiki/UHC" ; \
-					echo   "Category:			Testing" ; \
-					echo   "Build-Depends:		$(subst $(space),$(comma),$(strip @CABAL_BASE_LIB_DEPENDS@ @CABAL_EXTRA_LIB_DEPENDS@ $(3)))" ; \
-					echo   "Build-Tools:		" ; \
-					echo   "Extensions:			$(subst $(space),$(comma),$(strip RankNTypes MultiParamTypeClasses FunctionalDependencies $(4)))" ; \
-					echo   "Synopsis:			$(strip $(5))" ; \
-					echo   "Exposed-Modules:	$(subst $(space),$(comma),$(strip $(6)))" ; \
-					echo   "Exposed:			False" ; \
-					echo   "C-Sources:			$(subst $(space),$(comma),$(strip $(7)))" ; \
-					echo   "Ghc-Options:		$(GHC_OPTS_WHEN_EHC)" \
+					echo   "author:				UHC Team" ; \
+					echo   "homepage:			http://www.cs.uu.nl/wiki/UHC" ; \
+					echo   "category:			Testing" ; \
+					echo   "cabal-version:		>= 1.8" ; \
+					echo   "" ; \
+					echo   "$(10)" ; \
+					echo   "  build-depends:	$(subst $(space),$(comma),$(strip @CABAL_BASE_LIB_DEPENDS@ @CABAL_EXTRA_LIB_DEPENDS@ $(3)))" ; \
+					echo   "  build-tools:		" ; \
+					echo   "  extensions:		$(subst $(space),$(comma),$(strip RankNTypes MultiParamTypeClasses FunctionalDependencies $(4)))" ; \
+					echo   "  exposed-modules:	$(subst $(space),$(comma),$(strip $(6)))" ; \
+					echo   "  hs-source-dirs:	src" ; \
+					echo   "  c-sources:		$(subst $(space),$(comma),$(strip $(7)))" ; \
+					echo   "  ghc-options:		$(GHC_OPTS_WHEN_EHC)" \
 					)
+
 
 # generate cabal file for library
 # $1: pkg name
@@ -500,10 +505,10 @@ FUN_GEN_CABAL		= \
 # $5: synopsis
 # $6: exposed modules
 # $7: extra C sources
-FUN_GEN_CABAL_LIB	= $(call FUN_GEN_CABAL,\
+FUN_GEN_CABAL_LIB	= $(call FUN_GEN_CABAL_HEAD,\
 						$(1),$(2),$(3),$(4),$(5),$(6),$(7),\
 						Simple,\
-						$(TOPABS_PREFIX)LICENSE \
+						$(TOPABS_PREFIX)LICENSE,"library" \
 						)
 
 # generate cabal file for executable
@@ -514,10 +519,10 @@ FUN_GEN_CABAL_LIB	= $(call FUN_GEN_CABAL,\
 # $5: synopsis
 # $6: exposed modules
 # $7: extra C sources
-FUN_GEN_CABAL_EXEC	= $(call FUN_GEN_CABAL,\
+FUN_GEN_CABAL_EXEC	= $(call FUN_GEN_CABAL_HEAD,\
 						$(1),$(2),$(3),$(4),$(5),$(6),$(7),\
 						Custom,\
-						LICENSE \
+						LICENSE,"executable main" \
 						)
 
 # generate simplest cabal Setup.hs

@@ -149,7 +149,7 @@ INSTALLABS_VARIANT_LIB_AG_PREFIX		:= $(INSTALLABS_VARIANT_LIB_PREFIX)ag/
 # further derived info
 ###########################################################################################
 
-EHC_BLD_LIB_HS_VARIANT_PREFIX			:= $(EHC_BLD_LIBEHC_VARIANT_PREFIX)$(LIB_EHC_HS_PREFIX)
+EHC_BLD_LIB_HS_VARIANT_PREFIX			:= $(EHC_BLD_LIBEHC_VARIANT_PREFIX)src/$(LIB_EHC_HS_PREFIX)
 SRC_EHC_LIB_PREFIX						:= $(SRC_EHC_PREFIX)$(LIB_EHC_BASE)
 
 ###########################################################################################
