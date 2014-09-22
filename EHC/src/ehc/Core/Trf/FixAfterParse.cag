@@ -5,10 +5,11 @@
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% Fixes after parsing of Core 
-%%% (1) CTag inlined info
+%%% (1) CTag inlined info (only for datatypes defined in the same module)
+%%% (2) Order Cases by tag
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-%%[(50 codegen corein) hs module {%{EH}Core.Trf.FixAfterParse} import({%{EH}Base.Builtin},{%{EH}Base.Common},{%{EH}Gam.DataGam},{%{EH}Core},{%{EH}Ty})
+%%[(50 codegen corein) hs module {%{EH}Core.Trf.FixAfterParse} import({%{EH}Base.Builtin},{%{EH}Base.Common},{%{EH}Gam.DataGam},{%{EH}Core},{%{EH}Ty},{Data.Ord},{Data.List})
 %%]
 
 %%[(50 codegen corein) hs import({%{EH}AbstractCore})
@@ -57,6 +58,16 @@ ATTR AllCodeNT CodeAGItf [ dataGam: DataGam | | ]
 fixCTag :: DataGam -> CTag -> CTag
 fixCTag g (t@(CTag {ctagTyNm=tn, ctagNm=cn})) = maybe t id $ dataGamLookupTag tn cn g
 fixCTag _  t                                  =       t
+
+-- If case alternatives are not in alphabetical order, the wrong case get's picked.
+fixCaseOrder :: CAltL -> CAltL
+fixCaseOrder = sortBy (\x y -> f (pat_CAlt_Alt x) (pat_CAlt_Alt y))
+  -- Only using the CPat_Con constructor atm, so let's just ignore the other patterns.
+  where f :: CPat -> CPat -> Ordering
+        f (CPat_Con tg1 _ _) (CPat_Con tg2 _ _) = comparing ctagTag tg1 tg2
+        f (CPat_Con _ _ _) _ = LT
+        f  _ (CPat_Con _ _ _) = GT
+        f _ _ = EQ
 %%]
 
 %%[(50 codegen corein)
@@ -66,10 +77,11 @@ ATTR CodeAGItf [ | | cTrf: CModule ]
 
 %%[(50 codegen corein)
 SEM CExpr
-  | Tup         lhs			.	cTrf			=	@cTrf {tag_CExpr_Tup = fixCTag @lhs.dataGam @tag}
+  | Tup         lhs         .   cTrf            =   @cTrf {tag_CExpr_Tup = fixCTag @lhs.dataGam @tag}
+  | Case        lhs         .   cTrf            =   @cTrf {alts_CExpr_Case = fixCaseOrder @alts.cTrf}
 
 SEM CPat
-  | Con         lhs			.	cTrf			=	@cTrf {tag_CPat_Con = fixCTag @lhs.dataGam @tag}
+  | Con         lhs         .   cTrf            =   @cTrf {tag_CPat_Con = fixCTag @lhs.dataGam @tag}
 %%]
 SEM CExpr
   -- Non substituted failure continutations default to their error expression
