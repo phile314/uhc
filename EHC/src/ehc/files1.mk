@@ -58,6 +58,7 @@ EHC_HS_UTIL_SRC_CHS						:= $(patsubst %,$(SRC_EHC_PREFIX)%.chs,\
 													$(addprefix CHR/,Key Constraint Solve) \
 													$(addprefix AbstractCore/,Utils) \
 													$(addprefix AnaDomain/,Utils) \
+													$(addprefix API/,Core) \
 													$(addprefix VarMp/,Utils) \
 													$(addprefix Cil/,Common TyTag) \
 													$(addprefix Opts/,Base CommandLine) \
